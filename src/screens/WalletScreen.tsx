@@ -115,19 +115,19 @@ const WalletScreen: React.FC = () => {
             <View style={styles.paymentOptions}>
                 {/* Nút Back to Wallet */}
                 <TouchableOpacity
-                    style={[styles.buttonOption, isBackHovered && styles.buttonOptionHover]} // Thêm hiệu ứng hover
-                    onPressIn={() => setIsBackHovered(true)} // Khi nhấn giữ
-                    onPressOut={() => setIsBackHovered(false)} // Khi thả ra
-                    onPress={() => setIsPaymentSuccessVisible(false)} // Hành động nhấn
+                    style={[styles.buttonOption, isBackHovered && styles.buttonOptionHover]} 
+                    onPressIn={() => setIsBackHovered(true)} 
+                    onPressOut={() => setIsBackHovered(false)} 
+                    onPress={() => setIsPaymentSuccessVisible(false)} 
                 >
                     <Text style={styles.optionText}>Back to Wallet</Text>
                 </TouchableOpacity>
 
                 {/* Nút Buy more coins */}
                 <TouchableOpacity
-                    style={[styles.buttonOption, isBuyHovered && styles.buttonOptionHover]} // Thêm hiệu ứng hover
-                    onPressIn={() => setIsBuyHovered(true)} // Khi nhấn giữ
-                    onPressOut={() => setIsBuyHovered(false)} // Khi thả ra
+                    style={[styles.buttonOption, isBuyHovered && styles.buttonOptionHover]} 
+                    onPressIn={() => setIsBuyHovered(true)} 
+                    onPressOut={() => setIsBuyHovered(false)} 
                     onPress={() => {
                         setIsPaymentSuccessVisible(false);
                         setIsModalVisible(true);

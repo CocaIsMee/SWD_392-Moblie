@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CardItem from '../component/card/CardItem';
 import SearchTool from '../component/tools/SearchTool';
+import { MaterialIcons } from '@expo/vector-icons'; // Import MaterialIcons
 
 const HomeScreen: React.FC = () => {
     const [userName, setProfileName] = useState<string | null>(null);
@@ -50,7 +51,6 @@ const HomeScreen: React.FC = () => {
     };
 
     const handleFilterPress = () => {
-        // console.log('Filter button pressed');
         // Add your filter logic here
     };
 
@@ -73,7 +73,7 @@ const HomeScreen: React.FC = () => {
         <View style={styles.screenContainer}>
             <LinearGradient colors={['#08C2FF', '#BCF2F6']} style={styles.headerBodyContainer}>
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>Home</Text>
+                    <Text style={styles.headerTitle}>MindMath</Text>
                 </View>
                 <View style={styles.middleCard}>
                     <View style={styles.statusItem}>
@@ -81,14 +81,17 @@ const HomeScreen: React.FC = () => {
                         <Text style={styles.statusSubText}>Welcome back!</Text>
                     </View>
                     <View style={styles.statusItem}>
-                        <Text style={styles.statusText}>Coin:10$</Text>
+                        <View style={styles.coinContainer}>
+                            <MaterialIcons name="monetization-on" size={24} color="gold" />
+                            <Text style={styles.statusText}>10$</Text>
+                        </View>
                         <Text style={styles.statusSubText}>balance</Text>
                     </View>
                 </View>
             </LinearGradient>
             <ScrollView style={styles.container}>
                 <SearchTool onSearch={handleSearch} onFilterPress={handleFilterPress} />
-                <Text style={styles.welcomeText}>Routines</Text>
+                <Text style={styles.welcomeText}>Featured</Text>
                 {cardItems.map((item, index) => (
                     <CardItem
                         key={index}
@@ -140,10 +143,15 @@ const styles = StyleSheet.create({
     statusItem: {
         alignItems: 'center',
     },
+    coinContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     statusText: {
         fontSize: 20,
         fontWeight: 'bold',
         color: '#333',
+        marginLeft: 5, // Spacing between icon and text
     },
     statusSubText: {
         fontSize: 14,

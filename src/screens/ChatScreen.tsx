@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNPickerSelect from 'react-native-picker-select';
+import { Video, ResizeMode } from 'expo-av';
+import Modal from 'react-native-modal';
 
 interface FilterItem {
     id: string;
@@ -25,6 +27,7 @@ const AITool: React.FC = () => {
     const [chapterError, setChapterError] = useState<string | null>(null);
     const [topicError, setTopicError] = useState<string | null>(null);
     const [problemTypeError, setProblemTypeError] = useState<string | null>(null);
+    const [isModalVisible, setModalVisible] = useState<boolean>(false);  // Modal state
 
     // Fetch subjects and handle errors
     const fetchSubjects = async () => {
@@ -177,6 +180,26 @@ const AITool: React.FC = () => {
         fetchSubjects();
     }, []);
 
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);  // Toggle modal visibility
+    };
+
+    // Placeholder function for when the video is generated
+    const handleGenerateVideo = async () => {
+        setLoading(true);
+        try {
+            // Simulate video generation process
+            await new Promise((resolve) => setTimeout(resolve, 2000)); // Replace with actual video generation logic
+
+            // Open the modal with the video player
+            toggleModal();
+        } catch (error) {
+            console.error("Error generating video:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     // UI Rendering
     if (loading) {
         return (
@@ -289,9 +312,39 @@ const AITool: React.FC = () => {
                 </View>
             )}
 
-            <TouchableOpacity style={styles.generateButton} onPress={() => console.log('Generate Video')}>
-                <Text style={styles.generateButtonText}>Generate Video</Text>
-            </TouchableOpacity>
+            <View style={styles.container}>
+                <TouchableOpacity
+                    style={styles.generateButton}
+                    onPress={handleGenerateVideo}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color="#fff" />
+                            <Text style={styles.generateButtonText}>Generating...</Text>
+                        </View>
+                    ) : (
+                        <Text style={styles.generateButtonText}>Generate Video</Text>
+                    )}
+                </TouchableOpacity>
+            </View>
+            {/* Modal for displaying the video */}
+            <Modal isVisible={isModalVisible} onBackdropPress={toggleModal}>
+                <View style={styles.modalContent}>
+                    <Video
+                        source={{ uri: 'https://www.w3schools.com/html/mov_bbb.mp4' }}
+                        rate={1.0}
+                        volume={1.0}
+                        isMuted={false}
+                        resizeMode={ResizeMode.COVER}
+                        shouldPlay
+                        style={{ width: 300, height: 300 }}
+                    />
+                    <TouchableOpacity style={styles.closeButton} onPress={toggleModal}>
+                        <Text style={styles.closeButtonText}>Close</Text>
+                    </TouchableOpacity>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -345,6 +398,27 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    videoPlayer: {
+        width: 300,
+        height: 200,
+    },
+    closeButton: {
+        marginTop: 10,
+        backgroundColor: '#2196F3',
+        padding: 10,
+        borderRadius: 5,
+    },
+    closeButtonText: {
+        color: 'white',
+        fontSize: 16,
     },
     searchContainer: {
         flexDirection: 'row',

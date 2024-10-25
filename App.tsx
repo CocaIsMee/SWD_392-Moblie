@@ -4,6 +4,12 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Tabs from './src/component/navigation/Tabs';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import PrivacyPolicyScreen from './src/screens/PrivacyPolicyScreen';
+import CreateRequestScreen from './src/screens/CreateRequestScreen';
+import OrderHistoryScreen from './src/screens/OrderHistoryScreen';
 import Toast from 'react-native-toast-message';
 import { showToast } from './src/component/notification/Toast';
 
@@ -36,15 +42,19 @@ const App: React.FC = () => {
           name="Register"
           options={{ title: 'Register' }}
         >
-          {() => (
+          {({ navigation }) => (
             <RegisterScreen
               onRegisterSuccess={() => {
-                setIsAuthenticated(true);
                 showToast('Registration Successful', 'Welcome!', 'success');
+                navigation.navigate('Login');
               }}
             />
           )}
         </Stack.Screen>
+        <Stack.Screen name="Rule" component={PrivacyPolicyScreen} />
+        <Stack.Screen name="Request" component={CreateRequestScreen} />
+        <Stack.Screen name="Order" component={OrderHistoryScreen} />
+        <Stack.Screen name="Setting" component={SettingsScreen} />
       </Stack.Navigator>
       <Toast />
     </NavigationContainer>

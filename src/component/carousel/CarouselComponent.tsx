@@ -1,48 +1,35 @@
-// import { View, Dimensions, StyleSheet, Text } from 'react-native';
+// import React from 'react';
+// import { View, Text, Dimensions } from 'react-native';
 // import Carousel from 'react-native-snap-carousel';
 
+// // Example data for the Carousel
 // const data = [
-//     { title: 'Cao Cấp 1', description: 'Bài toán cao cấp về đại số tuyến tính.' },
-//     { title: 'Cao Cấp 2', description: 'Bài toán cao cấp về giải tích.' },
-//     { title: 'Toán Hình 1', description: 'Bài toán hình học cơ bản.' },
-//     { title: 'Toán Hình 2', description: 'Bài toán hình học nâng cao.' },
+//     { title: 'Item 1' },
+//     { title: 'Item 2' },
+//     { title: 'Item 3' },
 // ];
 
-// const CarouselComponent = () => {
-//     const windowWidth = Dimensions.get('window').width;
+// // Screen width for the Carousel
+// const screenWidth = Dimensions.get('window').width;
+
+// const MyCarousel: React.FC = () => {
+//     // Render item for each element in the data array
+//     const renderItem = ({ item }: { item: { title: string } }) => {
+//         return (
+//             <View style={{ backgroundColor: '#fff', padding: 20, borderRadius: 8 }}>
+//                 <Text style={{ fontSize: 18 }}>{item.title}</Text>
+//             </View>
+//         );
+//     };
 
 //     return (
-//         <View style={styles.carouselContainer}>
-//             <Carousel
-//                 data={data}
-//                 renderItem={({ item }) => (
-//                     <View style={styles.card}>
-//                         <Text>{item.title}</Text>
-//                         <Text>{item.description}</Text>
-//                     </View>
-//                 )}
-//                 sliderWidth={windowWidth}
-//                 itemWidth={250}
-//                 loop={true}
-//                 autoplay={true}
-//             />
-//         </View>
+//         <Carousel
+//             data={data} // Required: Array of items to display in the Carousel
+//             renderItem={renderItem} // Required: Function that renders each item
+//             sliderWidth={screenWidth} // Width of the entire carousel component
+//             itemWidth={screenWidth * 0.8} // Width of each individual item
+//         />
 //     );
 // };
 
-// const styles = StyleSheet.create({
-//     carouselContainer: {
-//         marginTop: 20,
-//     },
-//     card: {
-//         backgroundColor: '#fff',
-//         borderRadius: 10,
-//         padding: 20,
-//         shadowColor: '#000',
-//         shadowOpacity: 0.1,
-//         shadowRadius: 5,
-//         elevation: 2,
-//     },
-// });
-
-// export default CarouselComponent;
+// export default MyCarousel;

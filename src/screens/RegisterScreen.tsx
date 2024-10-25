@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AuthNavigationProp } from '../component/navigation/types';
 import { host_main, API_REGISTER } from '../api/api';
@@ -16,9 +16,75 @@ const RegisterScreen: React.FC<Props> = ({ onRegisterSuccess }) => {
     const [userName, setUserName] = useState('');
     const [loading, setLoading] = useState(false);
 
+    const [fullnameError, setFullnameError] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [phoneNumberError, setPhoneNumberError] = useState('');
+    const [userNameError, setUserNameError] = useState('');
+
     const navigation = useNavigation<AuthNavigationProp>();
 
+    const validateFullname = () => {
+        if (fullname.trim() === '') {
+            setFullnameError('Full name is required');
+            return false;
+        }
+        setFullnameError('');
+        return true;
+    };
+
+    const validateEmail = () => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email.trim() === '') {
+            setEmailError('Email is required');
+            return false;
+        } else if (!emailRegex.test(email)) {
+            setEmailError('Please enter a valid email address');
+            return false;
+        }
+        setEmailError('');
+        return true;
+    };
+
+    const validatePassword = () => {
+        if (password.length < 6) {
+            setPasswordError('Password must be at least 6 characters');
+            return false;
+        }
+        setPasswordError('');
+        return true;
+    };
+
+    const validatePhoneNumber = () => {
+        const phoneRegex = /^[0-9]{10,15}$/;
+        if (!phoneRegex.test(phoneNumber)) {
+            setPhoneNumberError('Please enter a valid phone number');
+            return false;
+        }
+        setPhoneNumberError('');
+        return true;
+    };
+
+    const validateUserName = () => {
+        if (userName.trim() === '') {
+            setUserNameError('Username is required');
+            return false;
+        }
+        setUserNameError('');
+        return true;
+    };
+
     const handleRegister = async () => {
+        const isFullnameValid = validateFullname();
+        const isEmailValid = validateEmail();
+        const isPasswordValid = validatePassword();
+        const isPhoneNumberValid = validatePhoneNumber();
+        const isUserNameValid = validateUserName();
+
+        if (!isFullnameValid || !isEmailValid || !isPasswordValid || !isPhoneNumberValid || !isUserNameValid) {
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await fetch(`${host_main}${API_REGISTER}`, {
@@ -35,16 +101,12 @@ const RegisterScreen: React.FC<Props> = ({ onRegisterSuccess }) => {
                 }),
             });
 
-            // Check if the response is successful (status 200-299)
             if (response.status === 201) {
-                // Registration was successful (no response body expected)
                 onRegisterSuccess();
-                // Navigate to the Login screen
                 navigation.navigate('Login');
             } else {
                 throw new Error(`Registration failed with status ${response.status}`);
             }
-
         } catch (error: unknown) {
             if (error instanceof Error) {
                 Alert.alert('Registration Failed', error.message || 'An error occurred');
@@ -57,67 +119,98 @@ const RegisterScreen: React.FC<Props> = ({ onRegisterSuccess }) => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Create an Account</Text>
-            <Text style={styles.subtitle}>Register to get started</Text>
+        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+            <View style={styles.container}>
+                <Text style={styles.title}>Create an Account</Text>
+                <Text style={styles.subtitle}>Register to get started</Text>
 
-            <TextInput
-                style={styles.input}
-                placeholder="Full Name"
-                value={fullname}
-                onChangeText={setFullname}
-                placeholderTextColor="#888"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={email}
-                onChangeText={setEmail}
-                placeholderTextColor="#888"
-                keyboardType="email-address"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                placeholderTextColor="#888"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Phone Number"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                placeholderTextColor="#888"
-                keyboardType="phone-pad"
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Username"
-                value={userName}
-                onChangeText={setUserName}
-                placeholderTextColor="#888"
-            />
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Full Name"
+                        value={fullname}
+                        onChangeText={setFullname}
+                        onBlur={validateFullname}
+                        placeholderTextColor="#888"
+                    />
+                    {fullnameError ? <Text style={styles.errorText}>{fullnameError}</Text> : null}
+                </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
-                <Text style={styles.buttonText}>{loading ? 'Registering...' : 'Register'}</Text>
-            </TouchableOpacity>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Username"
+                        value={userName}
+                        onChangeText={setUserName}
+                        onBlur={validateUserName}
+                        placeholderTextColor="#888"
+                    />
+                    {userNameError ? <Text style={styles.errorText}>{userNameError}</Text> : null}
+                </View>
 
-            <Text style={styles.footerText}>
-                Already have an account?{' '}
-                <Text
-                    style={styles.loginText}
-                    onPress={() => navigation.navigate('Login')}
-                >
-                    Log In
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Email"
+                        value={email}
+                        onChangeText={setEmail}
+                        onBlur={validateEmail}
+                        placeholderTextColor="#888"
+                        keyboardType="email-address"
+                    />
+                    {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Password"
+                        value={password}
+                        onChangeText={setPassword}
+                        onBlur={validatePassword}
+                        secureTextEntry
+                        placeholderTextColor="#888"
+                    />
+                    {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+                </View>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Phone Number"
+                        value={phoneNumber}
+                        onChangeText={setPhoneNumber}
+                        onBlur={validatePhoneNumber}
+                        placeholderTextColor="#888"
+                        keyboardType="phone-pad"
+                    />
+                    {phoneNumberError ? <Text style={styles.errorText}>{phoneNumberError}</Text> : null}
+                </View>
+
+
+                <TouchableOpacity style={styles.button} onPress={handleRegister} disabled={loading}>
+                    <Text style={styles.buttonText}>{loading ? 'Registering...' : 'Register'}</Text>
+                </TouchableOpacity>
+
+                <Text style={styles.footerText}>
+                    Already have an account?{' '}
+                    <Text
+                        style={styles.loginText}
+                        onPress={() => navigation.navigate('Login')}
+                    >
+                        Log In
+                    </Text>
                 </Text>
-            </Text>
-        </View>
+            </View>
+        </ScrollView>
     );
 };
 
 const styles = StyleSheet.create({
+    scrollViewContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -130,11 +223,17 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#333',
         marginBottom: 10,
+        textAlign: 'center',
     },
     subtitle: {
         fontSize: 16,
         color: '#666',
         marginBottom: 30,
+        textAlign: 'center',
+    },
+    inputContainer: {
+        width: '100%',
+        marginBottom: 15,
     },
     input: {
         width: '100%',
@@ -143,8 +242,12 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 15,
-        marginVertical: 10,
         backgroundColor: '#fff',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 12,
+        marginTop: 5,
     },
     button: {
         width: '100%',
@@ -153,7 +256,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         justifyContent: 'center',
         alignItems: 'center',
-        marginVertical: 20,
+        marginTop: 20,
     },
     buttonText: {
         color: '#fff',
@@ -163,6 +266,7 @@ const styles = StyleSheet.create({
     footerText: {
         fontSize: 14,
         color: '#666',
+        marginTop: 20,
     },
     loginText: {
         color: '#007BFF',
