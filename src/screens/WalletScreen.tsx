@@ -345,23 +345,38 @@ const WalletScreen: React.FC = () => {
         try {
             const userId = await AsyncStorage.getItem('userId');
             const token = await AsyncStorage.getItem('accessToken');
-            if (!userId || !token) return;
-
-            const response = await fetch(`https://mindmath.azurewebsites.net/api/transactions/create?userId=${userId}`, {
+            
+            if (!userId || !token) {
+                console.error('User credentials missing');
+                return;
+            }
+    
+            // Sửa lại URL để truyền userId qua query parameter
+            const response = await fetch(`https://mindmath.azurewebsites.net/api/transactions/mobile/create?userId=${userId}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-                body: JSON.stringify({ amount: amount, description: 'Top-up' })
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({ 
+                    amount: amount,
+                    description: 'Top-up'
+                })
             });
-
+    
             const data = await response.json();
+            
             if (response.ok && data.paymentUrl) {
                 setIsModalVisible(false);
-                navigation.navigate('VNPay', { paymentUrl: data.paymentUrl });
+                navigation.navigate('VNPay', { 
+                    paymentUrl: data.paymentUrl 
+                });
             } else {
-                console.error('Failed to get payment URL:', data);
+                throw new Error(data.message || 'Failed to create payment');
             }
         } catch (error) {
-            console.error('Failed to create transaction:', error);
+            console.error('Payment creation failed:', error);
+            // Có thể thêm Toast hoặc Alert để hiển thị lỗi cho người dùng
         }
     };
 

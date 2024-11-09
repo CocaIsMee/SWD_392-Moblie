@@ -29,11 +29,20 @@ export type RootStackParamList = {
   Chat: undefined;
   Setting: undefined;
   Wallet: undefined;
-  VNPay: { paymentUrl: string };
-  PaymentSuccess: undefined; // Thêm màn hình PaymentSuccess
-  PaymentFail: undefined;     // Thêm màn hình PaymentFail
+  VNPay: { 
+    paymentUrl: string;
+  };
+  PaymentSuccess: {
+    amount: string;
+    transactionNo: string;
+    orderInfo: string;
+    payDate: string;
+  };
+  PaymentFail: {
+    message: string;
+  };
+  Home: undefined;
 };
-
 
 // Define props type for VNPayScreen with navigation and route
 type VnPayScreenProps = {
@@ -43,7 +52,7 @@ type VnPayScreenProps = {
 
 // Create a linking configuration for deep linking
 const linking: LinkingOptions<RootStackParamList> = {
-  prefixes: ['mindmath://', 'https://mindmath.com'],
+  prefixes: ['mindmathapp://'],
   config: {
     screens: {
       Login: 'login',
